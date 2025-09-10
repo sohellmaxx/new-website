@@ -1,0 +1,1371 @@
+{% comment %}
+  This file demonstrates the structure of a Shopify theme's main layout file (theme.liquid)
+  and its corresponding sections. In a live theme, these would be separate files
+  (e.g., in /layout and /sections folders).
+{% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - {{ shop.name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    {% comment %}
+        In a real theme, this would be a separate CSS file in the /assets folder.
+        We include it here for the single-file demonstration.
+    {% endcomment %}
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: #000;
+            color: white;
+            text-align: center;
+            padding: 8px 0;
+            overflow: hidden;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .marquee {
+            animation: marquee 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            padding: 0 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 32px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 40px 8px 16px;
+            border: 1px solid #d1d5db;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .badge.show {
+            display: flex;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .hamburger {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: #333;
+            position: relative;
+        }
+
+        .hamburger::before,
+        .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: #333;
+        }
+
+        .hamburger::before { top: -8px; }
+        .hamburger::after { bottom: -8px; }
+
+        /* Navigation */
+        .navigation {
+            border-top: 1px solid #e5e7eb;
+            padding: 0 20px;
+        }
+
+        .navigation ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+            overflow-x: auto;
+        }
+
+        .navigation button {
+            background: none;
+            border: none;
+            padding: 16px 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        .navigation button:hover {
+            color: #666;
+        }
+
+        .hot-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 4px;
+            border-radius: 2px;
+            margin-left: 4px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 80vh;
+            overflow: hidden;
+        }
+
+        .hero-images {
+            position: absolute;
+            inset: 0;
+        }
+
+        .hero-image {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .hero-image.active {
+            opacity: 1;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 64px;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .core-section {
+            background: rgba(255,255,255,0.9);
+            padding: 24px;
+            max-width: 280px;
+        }
+
+        .core-title {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            margin-bottom: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .core-text {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .shop-now-btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .shop-now-btn:hover {
+            background: #333;
+        }
+
+        .core-subtitle {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .decorative-text {
+            position: absolute;
+            top: 50%;
+            right: 64px;
+            transform: translateY(-50%);
+            color: #fbbf24;
+            opacity: 0.8;
+            text-align: right;
+            z-index: 10;
+        }
+
+        .hindi-text div {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+
+        .hindi-text div:nth-child(1) { font-size: 48px; }
+        .hindi-text div:nth-child(2) { font-size: 32px; }
+        .hindi-text div:nth-child(3) { font-size: 24px; }
+
+        .urban-style {
+            position: absolute;
+            bottom: 32px;
+            left: 64px;
+            color: white;
+            opacity: 0.6;
+            z-index: 10;
+        }
+
+        .urban-title {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .urban-subtitle {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            margin-top: 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .hero-indicators {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .hero-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .hero-indicator.active {
+            background: white;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 48px 0;
+        }
+
+        .category-icons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 64px;
+            padding: 32px 0;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 48px;
+        }
+
+        .category-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .category-item:hover .category-icon {
+            background: #e5e7eb;
+        }
+
+        .category-name {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #374151;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            position: relative;
+            aspect-ratio: 1;
+            background: #f9fafb;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+        }
+
+        .wishlist-btn:hover {
+            background: #f9fafb;
+        }
+
+        .wishlist-btn.active svg {
+            fill: #ef4444;
+            stroke: #ef4444;
+        }
+
+        .quick-add-btn {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .product-card:hover .quick-add-btn {
+            display: flex;
+        }
+
+        .quick-add-btn:hover {
+            background: #333;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 8px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.1em;
+        }
+
+        .product-info h3 {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 0.025em;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .current-price {
+            font-size: 18px;
+            font-weight: 900;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #6b7280;
+            text-decoration: line-through;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-option {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        /* Color variants */
+        .color-black { background: #000; }
+        .color-white { background: #fff; }
+        .color-grey { background: #9ca3af; }
+        .color-navy { background: #1e3a8a; }
+        .color-beige { background: #fef3c7; }
+        .color-olive { background: #365314; }
+        .color-tortoise { background: #d97706; }
+        .color-clear { background: #f3f4f6; }
+        .color-khaki { background: #ca8a04; }
+        .color-brown { background: #92400e; }
+        .color-tan { background: #fef08a; }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            padding: 64px 0 32px;
+            margin-top: 64px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .footer-section h3 {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer-section p {
+            color: #9ca3af;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .footer-section button:hover {
+            color: white;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-btn {
+            background: #374151;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 18px;
+        }
+
+        .social-btn:hover {
+            background: #4b5563;
+        }
+
+        .newsletter {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .newsletter input {
+            background: #374151;
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+        }
+
+        .newsletter input::placeholder {
+            color: #9ca3af;
+        }
+
+        .newsletter input:focus {
+            outline: none;
+            background: #4b5563;
+        }
+
+        .newsletter button {
+            background: white;
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .newsletter button:hover {
+            background: #e5e7eb;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+            color: #9ca3af;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .navigation {
+                display: none;
+            }
+
+            .navigation.show {
+                display: block;
+            }
+
+            .navigation ul {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .hero-content {
+                left: 32px;
+            }
+
+            .decorative-text {
+                right: 32px;
+            }
+
+            .urban-style {
+                left: 32px;
+            }
+
+            .category-icons {
+                gap: 32px;
+            }
+
+            .category-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .filter-buttons {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    {% comment %}
+      The header section is a reusable component that would be
+      rendered here on every page.
+    {% endcomment %}
+    <section id="shopify-section-header" class="header">
+        <div class="top-banner">
+            <div class="marquee">
+                {{ section.settings.marquee_text }}
+            </div>
+        </div>
+        <header class="header">
+            <div class="container">
+                <div class="header-top">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <span class="hamburger"></span>
+                    </button>
+                    <div class="logo">
+                        <h1>STREET CULTURE®</h1>
+                    </div>
+                    {% if section.settings.show_search %}
+                    <div class="search-container">
+                        <input type="text" placeholder="SEARCH FOR PRODUCTS" id="searchInput">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    <div class="header-icons">
+                        <button class="icon-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                        <button class="icon-btn" id="wishlistBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span class="badge" id="wishlistBadge">0</span>
+                        </button>
+                        <button class="icon-btn" id="cartBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z"></path>
+                                <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z"></path>
+                                <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6"></path>
+                            </svg>
+                            <span class="badge" id="cartBadge">0</span>
+                        </button>
+                    </div>
+                </div>
+                <nav class="navigation" id="navigation">
+                    <ul>
+                        <li><button>NO RESTOCK</button></li>
+                        <li><button>EYEWEAR</button></li>
+                        <li><button>HATS & CAPS</button></li>
+                        <li><button>SYSTMS</button></li>
+                        <li><button>UMSB</button></li>
+                        <li><button>CLOTHING <span class="hot-badge">HOT</span></button></li>
+                        <li><button>ACCESSORIES</button></li>
+                        <li><button>COLLABS</button></li>
+                        <li><button>SKATEBOARDS</button></li>
+                        <li><button>ABOUT US</button></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        {% schema %}
+        {
+            "name": "Header",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "marquee_text",
+                    "label": "Marquee Text",
+                    "default": "T-SHIRTS THAT GET BETTER WITH EVERY WASH — NOW LIVE! • T-SHIRTS THAT GET BETTER WITH EVERY WASH — NOW LIVE! • T-SHIRTS THAT GET BETTER WITH EVERY WASH — NOW LIVE! •"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "show_search",
+                    "label": "Show search input",
+                    "default": true
+                }
+            ]
+        }
+        {% endschema %}
+    </section>
+
+    <main role="main">
+        {% comment %}
+          This section is a dynamic section for the home page. In a real theme,
+          it would be included in the templates/index.liquid file.
+        {% endcomment %}
+        <section id="shopify-section-hero-slider" class="hero">
+            <div class="hero-images" id="heroImages"></div>
+            <div class="hero-content">
+                <div class="core-section">
+                    <div class="core-title">{{ section.settings.core_title }}</div>
+                    <div class="core-text">
+                        {{ section.settings.core_text }}
+                    </div>
+                    <button class="shop-now-btn">SHOP NOW</button>
+                    <div class="core-subtitle">
+                        {{ section.settings.core_subtitle }}
+                    </div>
+                </div>
+            </div>
+            <div class="decorative-text">
+                <div class="hindi-text">
+                    <div>जीवन शैली</div>
+                    <div>स्ट्रीट कल्चर</div>
+                    <div>शहरी बंदर</div>
+                </div>
+            </div>
+            <div class="urban-style">
+                <div class="urban-title">{{ section.settings.urban_title }}</div>
+                <div class="urban-subtitle">{{ section.settings.urban_subtitle }}</div>
+            </div>
+            <div class="hero-indicators" id="heroIndicators"></div>
+
+            {% schema %}
+            {
+              "name": "Hero Slider",
+              "settings": [
+                {
+                  "type": "text",
+                  "id": "core_title",
+                  "label": "Core Title",
+                  "default": "CORE"
+                },
+                {
+                  "type": "textarea",
+                  "id": "core_text",
+                  "label": "Core Text",
+                  "default": "CRAFTED EXCLUSIVELY FOR\nALL OUR FRIENDS LONG FRAME\nCOLD FEEL OVER GRAPHIC TEES\n\nWE GOT YOU 💯"
+                },
+                {
+                  "type": "text",
+                  "id": "core_subtitle",
+                  "label": "Core Subtitle",
+                  "default": "TECHNIQUES THAT AGE BEAUTIFULLY. GETS BETTER WITH EVERY WASH."
+                },
+                {
+                  "type": "text",
+                  "id": "urban_title",
+                  "label": "Urban Title",
+                  "default": "URBAN STYLE"
+                },
+                {
+                  "type": "text",
+                  "id": "urban_subtitle",
+                  "label": "Urban Subtitle",
+                  "default": "AUTHENTIC • PREMIUM • STREET"
+                },
+                {
+                  "type": "image_picker",
+                  "id": "hero_image_1",
+                  "label": "Hero Image 1"
+                },
+                {
+                  "type": "image_picker",
+                  "id": "hero_image_2",
+                  "label": "Hero Image 2"
+                },
+                {
+                  "type": "image_picker",
+                  "id": "hero_image_3",
+                  "label": "Hero Image 3"
+                }
+              ]
+            }
+            {% endschema %}
+        </section>
+        <section id="shopify-section-product-grid" class="products">
+            <div class="container">
+                <!-- Category Icons -->
+                <div class="category-icons">
+                    <div class="category-item">
+                        <div class="category-icon">🧢</div>
+                        <div class="category-name">HATS & CAPS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">👕</div>
+                        <div class="category-name">TSHIRTS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">👛</div>
+                        <div class="category-name">WALLETS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🕶️</div>
+                        <div class="category-name">EYEWEAR</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">👔</div>
+                        <div class="category-name">SHIRTS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">👖</div>
+                        <div class="category-name">BOTTOMS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🎒</div>
+                        <div class="category-name">ACCESSORIES</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🎒</div>
+                        <div class="category-name">BACKPACK</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🧥</div>
+                        <div class="category-name">JACKETS</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🧑‍💻</div>
+                        <div class="category-name">HOODIES</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🛹</div>
+                        <div class="category-name">SKATEBOARDS</div>
+                    </div>
+                </div>
+                <!-- Filter Buttons -->
+                <div class="filter-buttons">
+                    {% for collection in collections %}
+                        <button class="filter-btn" data-filter="{{ collection.handle }}">{{ collection.title | upcase }}</button>
+                    {% endfor %}
+                </div>
+                <!-- Product Grid -->
+                <div class="product-grid" id="productGrid">
+                    {% if section.settings.collection != blank %}
+                        {% for product in collections[section.settings.collection].products %}
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.featured_image.alt }}">
+                                    <button class="wishlist-btn" onclick="toggleWishlist({{ product.id }})">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="quick-add-btn" onclick="addToCart({{ product.id }})">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z"></path>
+                                            <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z"></path>
+                                            <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6"></path>
+                                        </svg>
+                                        <span>QUICK ADD</span>
+                                    </button>
+                                    {% if product.tags contains 'New' %}
+                                        <div class="new-badge">NEW</div>
+                                    {% endif %}
+                                </div>
+                                <div class="product-info">
+                                    <h3>{{ product.title }}</h3>
+                                    <div class="product-price">
+                                        <span class="current-price">₹{{ product.price | divided_by: 100 }}</span>
+                                        {% if product.compare_at_price > product.price %}
+                                            <span class="original-price">₹{{ product.compare_at_price | divided_by: 100 }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% comment %} 
+                                        Note: Colors are not a standard Shopify property and would require customization.
+                                        This would require more advanced Liquid or metafields.
+                                    {% endcomment %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No collection selected in theme settings.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% schema %}
+            {
+              "name": "Product Grid",
+              "settings": [
+                {
+                  "type": "text",
+                  "id": "title",
+                  "label": "Heading",
+                  "default": "NEW ARRIVALS"
+                },
+                {
+                  "type": "collection",
+                  "id": "collection",
+                  "label": "Collection to display"
+                }
+              ]
+            }
+            {% endschema %}
+        </section>
+    </main>
+
+    {% comment %}
+      The footer section, also a reusable component.
+    {% endcomment %}
+    <section id="shopify-section-footer" class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>STREET CULTURE®</h3>
+                    <p>Premium streetwear that gets better with every wash. Authentic designs for the urban lifestyle.</p>
+                    <div class="social-icons">
+                        <button class="social-btn">📷</button>
+                        <button class="social-btn">📘</button>
+                        <button class="social-btn">🐦</button>
+                        <button class="social-btn">📺</button>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>SHOP</h4>
+                    <ul>
+                        <li><button>NEW ARRIVALS</button></li>
+                        <li><button>T-SHIRTS</button></li>
+                        <li><button>HOODIES</button></li>
+                        <li><button>ACCESSORIES</button></li>
+                        <li><button>SALE</button></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>SUPPORT</h4>
+                    <ul>
+                        <li><button>SIZE GUIDE</button></li>
+                        <li><button>SHIPPING INFO</button></li>
+                        <li><button>RETURNS</button></li>
+                        <li><button>CONTACT US</button></li>
+                        <li><button>FAQ</button></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>STAY UPDATED</h4>
+                    <p>Get the latest drops and exclusive offers.</p>
+                    <div class="newsletter">
+                        <input type="email" placeholder="YOUR EMAIL">
+                        <button>SUBSCRIBE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2024 STREET CULTURE®. ALL RIGHTS RESERVED.</div>
+                <div class="footer-links">
+                    <button>PRIVACY POLICY</button>
+                    <button>TERMS OF SERVICE</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% schema %}
+    {
+      "name": "Footer"
+    }
+    {% endschema %}
+
+    {% comment %}
+        In a real theme, this would be a separate JS file in the /assets folder.
+        We include it here for the single-file demonstration.
+    {% endcomment %}
+    <script>
+        // Global state
+        let cartItems = [];
+        let wishlistItems = [];
+        let currentHeroImage = 0;
+        let activeFilter = 'all';
+
+        // DOM elements
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navigation = document.getElementById('navigation');
+        const heroImagesContainer = document.getElementById('heroImages');
+        const heroIndicators = document.getElementById('heroIndicators');
+        const productGrid = document.getElementById('productGrid');
+        const cartBadge = document.getElementById('cartBadge');
+        const wishlistBadge = document.getElementById('wishlistBadge');
+        const searchInput = document.getElementById('searchInput');
+
+        // Initialize the website
+        document.addEventListener('DOMContentLoaded', function() {
+            initHeroSlider();
+            initEventListeners();
+        });
+
+        // Mobile menu toggle
+        function initEventListeners() {
+            if (mobileMenuBtn && navigation) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navigation.classList.toggle('show');
+                });
+            }
+
+            // Filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    activeFilter = this.dataset.filter;
+                    // Note: This filtering would need a server-side Liquid change or AJAX call in a real theme.
+                });
+            });
+
+            // Search functionality
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    // Note: This search functionality would need a server-side Liquid change or AJAX call in a real theme.
+                });
+            }
+
+            // Quick add buttons
+            const quickAddButtons = document.querySelectorAll('.quick-add-btn');
+            quickAddButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // In a real theme, this would trigger a Shopify API call to add the item to the cart.
+                    showNotification('Item added to cart!');
+                });
+            });
+
+            // Wishlist buttons
+            const wishlistButtons = document.querySelectorAll('.wishlist-btn');
+            wishlistButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // In a real theme, this would trigger an API call to a wishlist app or store to a browser cookie.
+                    showNotification('Item added to wishlist!');
+                });
+            });
+        }
+
+        // Hero slider functionality
+        function initHeroSlider() {
+            if (heroImagesContainer && heroIndicators) {
+                const heroImagesData = [
+                    "{{ section.settings.hero_image_1 | image_url }}",
+                    "{{ section.settings.hero_image_2 | image_url }}",
+                    "{{ section.settings.hero_image_3 | image_url }}"
+                ].filter(url => url.length > 0);
+
+                heroImagesData.forEach((image, index) => {
+                    const heroDiv = document.createElement('div');
+                    heroDiv.className = `hero-image ${index === 0 ? 'active' : ''}`;
+                    heroDiv.innerHTML = `<img src="${image}" alt="Hero ${index + 1}">`;
+                    heroImagesContainer.appendChild(heroDiv);
+                });
+
+                heroImagesData.forEach((_, index) => {
+                    const indicator = document.createElement('button');
+                    indicator.className = `hero-indicator ${index === 0 ? 'active' : ''}`;
+                    indicator.addEventListener('click', () => setHeroImage(index));
+                    heroIndicators.appendChild(indicator);
+                });
+
+                setInterval(() => {
+                    currentHeroImage = (currentHeroImage + 1) % heroImagesData.length;
+                    setHeroImage(currentHeroImage);
+                }, 5000);
+            }
+        }
+
+        function setHeroImage(index) {
+            const heroImageElements = document.querySelectorAll('.hero-image');
+            const indicatorElements = document.querySelectorAll('.hero-indicator');
+            
+            heroImageElements.forEach(img => img.classList.remove('active'));
+            indicatorElements.forEach(ind => ind.classList.remove('active'));
+            
+            heroImageElements[index].classList.add('active');
+            indicatorElements[index].classList.add('active');
+            
+            currentHeroImage = index;
+        }
+
+        // Update badge counters
+        function updateBadges() {
+            // Note: This is now a placeholder. In a real theme, these would
+            // get their values from the cart API and a wishlist app.
+        }
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #000;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 4px;
+                font-family: 'Poppins', sans-serif;
+                font-weight: 700;
+                font-size: 14px;
+                z-index: 10000;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Smooth scrolling for internal links
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('shop-now-btn')) {
+                e.preventDefault();
+                const productsSection = document.querySelector('.products');
+                if (productsSection) {
+                    productsSection.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (navigation && mobileMenuBtn && !navigation.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navigation.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
